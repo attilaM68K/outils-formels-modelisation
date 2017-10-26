@@ -1,4 +1,5 @@
 import PetriKit
+import Foundation
 
 public func createModel() -> PTNet {
     // Write here the encoding of the smokers' model.
@@ -13,27 +14,27 @@ public func createModel() -> PTNet {
     let w1  = PTPlace(named: "w1")
     let w2  = PTPlace(named: "w2")
     let w3  = PTPlace(named: "w3")
-    
+
     // Transitions
     let tpt = PTTransition(
         named           : "tpt",
         preconditions   : [PTArc(place: r)],
         postconditions  : [PTArc(place: p), PTArc(place: t)])
     let tpm = PTTransition(
-        named:          : "tpm",
+        named           : "tpm",
         preconditions   : [PTArc(place: r)],
         postconditions  : [PTArc(place: p), PTArc(place: m)])
     let ttm = PTTransition(
-        named:          : "ttm",
+        named           : "ttm",
         preconditions   : [PTArc(place: r)],
         postconditions  : [PTArc(place: t), PTArc(place: m)])
     let ts1 = PTTransition(
         named           : "ts1",
-        preconditions   : [PTArc(place: p), PTArc(place: t), PTArc(place: w1)]
+        preconditions   : [PTArc(place: p), PTArc(place: t), PTArc(place: w1)],
         postconditions  : [PTArc(place: s1), PTArc(place: r)])
     let ts2 = PTTransition(
         named           : "ts2",
-        preconditions   : [PTArc(place: p), PTArc(place: m), PTArc(place: w2)]
+        preconditions   : [PTArc(place: p), PTArc(place: m), PTArc(place: w2)],
         postconditions  : [PTArc(place: s2), PTArc(place: r)])
     let ts3 = PTTransition(
         named           : "ts3",
@@ -51,5 +52,10 @@ public func createModel() -> PTNet {
         named           : "tw3",
         preconditions   : [PTArc(place: s3)],
         postconditions  : [PTArc(place: w3)])
-    return PTNet(places: [r, p, t, m, s1, s2, s3, w1, w2, w3], transitions: [tpt, tpm, ttm, ts1, ts2, ts3, tw1, tw2, tw3])
+    // PTNet
+    let net = PTNet(
+        places: [r, p, t, m, s1, s2, s3, w1, w2, w3],
+        transitions: [tpt, tpm, ttm, ts1, ts2, ts3, tw1, tw2, tw3])
+    try! net.saveAsDot(to: URL(fileURLWithPath: "map.dot"), withMarking: [r: 0, p: 1, t: 2, m: 3, s1: 4, s2: 5, s3:6, w1: 7, w2: 8, w3: 9])
+    return net
 }
