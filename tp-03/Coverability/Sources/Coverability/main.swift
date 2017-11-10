@@ -17,8 +17,32 @@ else {
     fatalError("invalid model")
 }
 
-let initialMarking: CoverabilityMarking = [r: 1, p: 0, t: .omega, m: 0, w1: 1, s1: 0, w2: 1, s2: 0, w3: 1, s3: 0]
-// let graph = model.coverabilityGraph(from: initialMarking)
+let initialMarking: CoverabilityMarking = [r: 1, p: 0, t: 0, m: 0, w1: 1, s1: 0, w2: 1, s2: 0, w3: 1, s3: 0]
+let graph = model.coverabilityGraph(from: initialMarking)
+
+/*var model2 = createUnboundedModel()
+// Retrieve places model.
+guard let s0 = model2.places.first(where: { $0.name == "s0" }),
+      let s1 = model2.places.first(where: { $0.name == "s1" }),
+      let s2 = model2.places.first(where: { $0.name == "s2" }),
+      let s3 = model2.places.first(where: { $0.name == "s3" }),
+      let s4 = model2.places.first(where: { $0.name == "s4" }),
+      let b  = model2.places.first(where: { $0.name == "b" })
+else {
+    fatalError("invalid model")
+}
+
+let initialMarking2: CoverabilityMarking = [s0: 1, s1: 0, s2: 0, s3: 0, s4: 1, b: 0]
+let graph2 = model2.coverabilityGraph(from: initialMarking2)
+for successor in graph2.successors {
+  for successor2 in successor.value.successors {
+    print("MAIN")
+    print(successor2.value.marking)
+    print(graph2.marking)
+  }
+}
+*/
+
 // Did not have time to correct an infinite loop error
 
 // This file contains the code that will be executed if you run your program from the terminal. You
