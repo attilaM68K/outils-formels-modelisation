@@ -43,7 +43,6 @@ for successor in graph2.successors {
 }
 */
 
-// Did not have time to correct an infinite loop error
 
 // This file contains the code that will be executed if you run your program from the terminal. You
 // don't have to write anything in this file, but you may use it to debug your code. You can create
