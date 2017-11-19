@@ -2,7 +2,7 @@ import PetriKit
 import CoverabilityLib
 import XCTest
 
-class SmokersLibTests: XCTestCase {
+class CoverabilityLibTests: XCTestCase {
 
     static let allTests = [
         ("testBoundedGraph"  , testBoundedGraph  ),
@@ -46,7 +46,7 @@ class SmokersLibTests: XCTestCase {
         let initialMarking: CoverabilityMarking =
             [s0: 1, s1: 0, s2: 1, s3: 0, s4: 1, b: 0]
         let coverabilityGraph = model.coverabilityGraph(from: initialMarking)
-        XCTAssertEqual(coverabilityGraph.count, 4)
+        XCTAssertEqual(coverabilityGraph.count, 5)
     }
 
 }
