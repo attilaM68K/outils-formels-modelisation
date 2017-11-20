@@ -1,6 +1,6 @@
 import PetriKit
 import PhilosophersLib
-
+/*
 do {
     enum C: CustomStringConvertible {
         case b, v, o
@@ -40,13 +40,35 @@ do {
     }
     print(m2)
 }
-
+*/
 print()
 
 do {
-    let philosophers = lockFreePhilosophers(n: 3)
+    print("Ex1 - Philosophes 5, Non Bloquable")
+    let philosophers = lockFreePhilosophers(n: 5)
     // let philosophers = lockablePhilosophers(n: 3)
-    for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
+    /*for m in philosophers.simulation(from: philosophers.initialMarking!).prefix(10) {
         print(m)
+    }*/
+    let phil_mark_graph = philosophers.markingGraph()
+    print(philosophers.counter(MarkingGraph: phil_mark_graph!))
+    /*for mouving in phil_mark_graph!.makeIterator() {
+      print(mouving.marking)
+    }*/
+
+    print("Ex2 - Philosophes 5, Bloquable")
+    let philosophers2 = lockablePhilosophers(n: 5)
+    let phil_mark_graph2 = philosophers2.markingGraph()
+    print(philosophers.counter(MarkingGraph: phil_mark_graph2!))
+    /*for mouving in phil_mark_graph2!.makeIterator() {
+      print(mouving.marking)
+    }*/
+
+    print("Ex3 - Exemple d'etat bloque")
+    for mouving in phil_mark_graph2!.makeIterator() {
+      if(mouving.successors.isEmpty) {
+        print(mouving.marking)
+        //break
+      }
     }
 }
