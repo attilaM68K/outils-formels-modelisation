@@ -1,59 +1,42 @@
 extension PredicateNet {
 
     /// Returns the marking graph of a bounded predicate net.
-    public func markingGraph() -> PredicateMarkingNode<T>? {
+    public func markingGraph(from marking: MarkingType) -> PredicateMarkingNode<T>? {
 
-      var mark_init = PredicateMarkingNode<T>(marking: self.initialMarking!, successors: [:]) // initial marking
+      let mark_init = PredicateMarkingNode<T>(marking: marking, successors: [:]) // initial marking
       var mark_todo = [mark_init] // Markings to do
       var mark_visited = [mark_init] // Markings already visited
-      var curr_mark: PredicateMarkingNode<T> // The marking that is currently tested
-      var curr_trans: MarkingType?
-      var mark_next = mark_init // The resultant marking from curr_trans
-      var bind_map_next: PredicateBindingMap<T>
-      var curr_bindings = [PredicateTransition<T>.Binding]()
-      var if_end = true // For a single piece of code in the while loop, which should only be executed once
 
       while !(mark_todo.isEmpty) {
-        curr_mark = mark_todo[0] // Test the first element for each iteration
+        let curr_mark = mark_todo[0] // Test the first element for each iteration
         for transit in self.transitions {
+          curr_mark.successors[transit] = [:]
           //print(transit)
-          curr_bindings = transit.fireableBingings(from: curr_mark.marking)
+          let curr_bindings = transit.fireableBingings(from: curr_mark.marking)
           for binding in curr_bindings {
-            curr_trans = transit.fire(from: curr_mark.marking, with: binding) // Try the transition
+            let curr_trans = transit.fire(from: curr_mark.marking, with: binding) // Try the transition
             if (curr_trans != nil) { // If curr_trans is not nill then...
               //print(curr_trans!)
-              mark_next = PredicateMarkingNode<T>(marking: curr_trans!, successors: [:]) // ...store the resulting marking
-              if (mark_visited.contains(where: { PredicateNet.greater( $0.marking, mark_next.marking) })) {
-                print("Unbounded model")
+              if (mark_visited.contains(where: { PredicateNet.greater( curr_trans!, $0.marking) })) {
+                //print("Unbounded model")
                 return nil
               }
-              bind_map_next = PredicateBindingMap<T>(dictionaryLiteral: (binding, mark_next))
-              curr_mark.successors.updateValue(bind_map_next, forKey: transit) // add marking as successor
-              if !(mark_visited.contains(where: { PredicateNet.equals($0.marking, mark_next.marking) })) { // if the marking is not visited yet
-                mark_todo.append(mark_next) // Add marking to the waiting list
+              if !(mark_visited.contains(where: { PredicateNet.equals($0.marking, curr_trans!) })) { // if the marking is not visited yet
+                let mark_next = PredicateMarkingNode<T>(marking: curr_trans!, successors: [:]) // create new node if there's nothing like that
+                curr_mark.successors[transit]![binding] = mark_next
+                mark_todo.append(mark_next) //maybe:  // Add marking to the waiting list
                 mark_visited.append(mark_next) // Add marking to the list of visited ones
                 //print(mark_next.marking)
+              } else {
+                let idx = mark_visited.index(where: { PredicateNet.equals($0.marking, curr_trans!) })
+                curr_mark.successors[transit]![binding] = mark_visited[idx!]
               }
             }
           }
         }
-        if (if_end) { // Only run this part of the code ONCE
-          if_end = false
-          mark_init = curr_mark // Modify the mark_init to contain the successors
-        }
         mark_todo.remove(at: 0) // all tests finished for curr_mark, remove it from the waiting list
       }
-      return mark_init // Returning initial marking with successors
-        // Write your code here ...
-
-        // Note that I created the two static methods `equals(_:_:)` and `greater(_:_:)` to help
-        // you compare predicate markings. You can use them as the following:
-        //
-        //     PredicateNet.equals(someMarking, someOtherMarking)
-        //     PredicateNet.greater(someMarking, someOtherMarking)
-        //
-        // You may use these methods to check if you've already visited a marking, or if the model
-        // is unbounded.
+      return mark_init
     }
 
     // MARK: Internals
@@ -81,26 +64,6 @@ extension PredicateNet {
             }
         }
         return hasGreater
-    }
-    public func counter(MarkingGraph: PredicateMarkingNode<T>) -> Int{
-      var todo_list = [MarkingGraph]
-      var seen_list = [MarkingGraph]
-      var element_count = 0
-      while !(todo_list.isEmpty) {
-        let curr_mark = todo_list[0]
-        element_count+=1
-        print(curr_mark.marking)
-        for successor in curr_mark.successors {
-          for state in successor.value {
-            if !(seen_list.contains(where: { PredicateNet.equals($0.marking, state.value.marking) })) {
-              todo_list.append(state.value)
-              seen_list.append(state.value)
-            }
-          }
-        }
-        todo_list.remove(at: 0)
-      }
-      return element_count
     }
 }
 
