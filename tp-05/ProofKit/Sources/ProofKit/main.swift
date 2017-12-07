@@ -2,11 +2,18 @@ import ProofKitLib
 
 let a: Formula = "a"
 let b: Formula = "b"
-let f = a && b
+let c: Formula = "c"
+let d: Formula = "d"
+let f = (!a || b) && (c && d) || c
+let g = b || (!b && a)
 
 print(f)
-
-let booleanEvaluation = f.eval { (proposition) -> Bool in
+print(f.dnf)
+print(f.cnf)
+print(g)
+print(g.dnf)
+print(g.cnf)
+/*let booleanEvaluation = f.eval { (proposition) -> Bool in
     switch proposition {
         case "p": return true
         case "q": return false
@@ -50,3 +57,4 @@ let fruityEvaluation = f.eval { (proposition) -> Fruit in
     }
 }
 print(fruityEvaluation)
+*/

@@ -72,14 +72,70 @@ public enum Formula {
 
     /// The disjunctive normal form of the formula.
     public var dnf: Formula {
-        // Write your code here ...
-        return self
+        switch self {
+        case .proposition(_):
+            return self
+        case .negation(let a):
+            switch a {
+            case .proposition(_):
+                return self
+            case .negation(let b):
+                return b.dnf
+            case .disjunction(let b, let c):
+                return ((!b).dnf && (!c).dnf).dnf
+            case .conjunction(let b, let c):
+                return (!b).dnf || (!c).dnf
+            case .implication(_):
+                return (!a.dnf).dnf
+            }
+        case .disjunction(let b, let c):
+            return b.dnf || c.dnf
+        case .conjunction(let b, let c):
+            switch (b, c) {
+            case (.disjunction(let d, let e), _):
+                return (d.dnf && c.dnf).dnf || (e.dnf && c.dnf).dnf
+            case (_, .disjunction(let d, let e)):
+                return (b.dnf && d.dnf).dnf || (b.dnf && e.dnf).dnf
+            default:
+                return b.dnf && c.dnf
+            }
+        case .implication(let b, let c):
+            return (!b).dnf || c.dnf
+        }
     }
 
     /// The conjunctive normal form of the formula.
     public var cnf: Formula {
-        // Write your code here ...
-        return self
+      switch self {
+      case .proposition(_):
+          return self
+      case .negation(let a):
+          switch a {
+          case .proposition(_):
+              return self
+          case .negation(let b):
+              return b.cnf
+          case .disjunction(let b, let c):
+              return ((!b).cnf && (!c).cnf).cnf
+          case .conjunction(let b, let c):
+              return (!b).cnf || (!c).cnf
+          case .implication(_):
+              return (!a.cnf).cnf
+          }
+      case .disjunction(let b, let c):
+          switch (b, c) {
+          case (.conjunction(let d, let e), _):
+              return (d.cnf || c.cnf).cnf && (e.cnf || c.cnf).cnf
+          case (_, .conjunction(let d, let e)):
+              return (b.cnf || d.cnf).cnf && (b.cnf || e.cnf).cnf
+          default:
+              return b.cnf || c.cnf
+        }
+      case .conjunction(let b, let c):
+          return b.cnf && c.cnf
+      case .implication(let b, let c):
+          return (!b).cnf || c.cnf
+      }
     }
 
     /// The propositions the formula is based on.
